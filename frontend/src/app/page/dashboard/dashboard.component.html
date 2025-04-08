@@ -1,14 +1,16 @@
 <app-data-chart></app-data-chart>
-{{currentTime | date:'short'}} <br>
-{{currentTime | date:'long'}} <br>
-<div>{{ currentTime | date : "HH:mm:ss" }}</div>
-<div>{{ currentTime | date}}</div>
 
-{{ Amount | currency }} <br>
+<div class="text-center w-100">
+  {{ currentTime | date : "short" }} <br />
+  {{ currentTime | date : "long" }} <br />
+  <div>{{ currentTime | date : "HH:mm:ss" }}</div>
+  <div>{{ currentTime | date }}</div>
 
-{{name | reverse}}
+  {{ Amount | currency }} <br />
 
-<div>
-  <p i18n="Simple message example@@message.simple">A simple message.</p>
-  <!-- ng serve --configuration=fr --open   -->
+  <div>Custom Pipe {{ name | reverse }}</div>
+  <div>
+    <p i18n="Simple message example@@message.simple">A simple message.</p>
+    <!-- ng serve --configuration=fr --open   -->
+  </div>
 </div>

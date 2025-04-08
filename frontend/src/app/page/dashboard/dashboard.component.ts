@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, signal } from '@angular/core';
+import { Component, Inject, LOCALE_ID } from '@angular/core';
 import { DataChartComponent } from '../../components/data-chart/data-chart.component';
 import { CommonModule } from '@angular/common';
 import { ReversePipe } from '../../pipe/reverse.pipe';
@@ -11,12 +11,10 @@ import { ReversePipe } from '../../pipe/reverse.pipe';
 })
 export class DashboardComponent {
   constructor(@Inject(LOCALE_ID) public locale: string) {}
-  currentTime: Date = new Date();
 
   Amount = 1300.0;
-  rupee = 150;
-
   name = 'aakash sheopuriya';
+  currentTime: any;
 
   ngOnInit(): void {
     setInterval(() => {

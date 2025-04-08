@@ -23,7 +23,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-task',
-  imports: [ReactiveFormsModule, NgbDropdownModule, NgFor, NgIf, NgStyle, FormsModule],
+  imports: [
+    ReactiveFormsModule,
+    NgbDropdownModule,
+    NgFor,
+    NgIf,
+    NgStyle,
+    FormsModule,
+  ],
   templateUrl: './task.component.html',
   styleUrl: './task.component.css',
 })
@@ -66,7 +73,7 @@ export class TaskComponent {
   }
 
   isExpired(endDate: string): boolean {
-    return new Date(endDate) < new Date(); 
+    return new Date(endDate) < new Date();
   }
 
   onClick() {
@@ -77,9 +84,6 @@ export class TaskComponent {
     this.service.onGetAllTask().subscribe((res: any) => {
       this.data = res.data;
     });
-
-    // this.userSignal = toSignal(this.service.onGetAllTask())
-    // console.log("userSignal")
   }
 
   getAllUsers() {
@@ -102,14 +106,13 @@ export class TaskComponent {
   }
 
   onDelete(uid: any) {
-    console.log(uid)
-    this.service.onDeleteTask({uid:uid}).subscribe((res: any) => {
+    this.service.onDeleteTask({ uid: uid }).subscribe((res: any) => {
       console.log('delete', res);
     });
 
     setTimeout(() => {
       this.getdata();
-    },200);
+    }, 200);
   }
 
   onSearchFilter() {
@@ -122,8 +125,7 @@ export class TaskComponent {
       this.searchfilterform.get('status')?.value === null
     ) {
       this.message = 'Search field is empty ';
-          this.noDataFound = false;
-
+      this.noDataFound = false;
     } else {
       console.log('this.serchData', this.searchfilterform.value);
       this.service.onSearchTask(this.serchData).subscribe((res: any) => {
@@ -132,12 +134,10 @@ export class TaskComponent {
         if (res.data.length === 0) {
           this.message = 'No result Found';
           this.noDataFound = false;
-
           this.getdata();
         } else {
           this.message = null;
           this.noDataFound = true;
-
         }
       });
       this.searchfilterform.patchValue({
@@ -225,7 +225,6 @@ export class TaskComponent {
   onInputChange(event: Event) {
     this.inputValue = (event.target as HTMLInputElement).value;
     if (this.inputValue.length > 2) {
-      console.log(this.inputValue);
       if (!this.inputValue) {
         this.message = 'Field is Empty';
       } else {

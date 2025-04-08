@@ -26,9 +26,6 @@ export class DataChartComponent {
       this.monthData = this.countOccurrences(this.monthList);
 
       let data = this.monthData;
-      console.log(this.monthData);
-      console.log(typeof this.monthData['03']);
-      console.log(data['03']);
 
       // ----------- chart
 

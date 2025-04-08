@@ -214,7 +214,6 @@ const statusChange = async (req, res) => {
 
 const getsearchtask = async (req, res) => {
   try {
-    // var searchData = null;
     console.log(req.body);
     const {
       selectValue,
@@ -249,7 +248,7 @@ const getsearchtask = async (req, res) => {
         .sort({ enddate: 1 });
       if (tasks) {
         res.send({
-          message: "success gget",
+          message: "success",
           status: 1,
           data: tasks,
         });
@@ -455,6 +454,7 @@ const getsearchtaskbyName = async (req, res) => {
           { email: { $regex: inputdata, $options: "i" } },
           { discription: { $regex: inputdata, $options: "i" } },
           { task: { $regex: inputdata, $options: "i" } },
+          { status: { $regex: inputdata, $options: "i" } },
         ],
       })
       .sort({ enddate: 1 });
@@ -482,7 +482,6 @@ const getTaskByFilterEmail = async (req, res) => {
     const data = await taskModel
       .find({ email: { $in: selectedEmails } })
       .sort({ enddate: 1 });
-    console.log(data);
     if (data.length > 0) {
       res.send({
         status: 1,

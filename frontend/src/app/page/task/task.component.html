@@ -60,7 +60,7 @@
               <span class="px-2">{{ item.lastname }}</span>
             </td>
             <td class="border-end px-2 text-center">{{ item.task }}</td>
-            <td class="border-end px-2 text-center" style="max-width: 200px">
+            <td class="border-end px-2 text-center">
               {{ item.discription }}
             </td>
             <td class="border-end px-2 text-center">
@@ -77,10 +77,8 @@
                   : ''
               }"
             >
-              {{ item.enddate.split("T")[0] }}
+              {{ isExpired(item.enddate.split('T')[0]) ? 'Expaired' : item.enddate.split("T")[0] }}
             </td>
-
-            <!-- {'background-color': item.enddate < new Date() ? 'red' : 'transparent'} -->
 
             @if(item.status=="Pending"){
             <td
@@ -410,7 +408,6 @@
           </button>
         </div>
         <hr />
-
         <!-- <button type="button" class="btn btn-outline-secondary" (click)="offcanvas.close('Save click')">Save</button> -->
       </div>
     </div>

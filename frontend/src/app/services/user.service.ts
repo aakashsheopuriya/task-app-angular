@@ -17,12 +17,4 @@ export class UserService {
   updateProfileImage(newImage: string) {
     this.profileImage.next(newImage);
   }
-
-  activeroute = 3
-  private currentRoute = new BehaviorSubject<any>(this.activeroute)
-  currentRoute$ = this.currentRoute.asObservable()
-  updateCurrentRoute(route:any){
-    this.currentRoute.next(route)
-  }
-
 }
