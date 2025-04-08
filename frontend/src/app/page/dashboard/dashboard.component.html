@@ -1,0 +1,14 @@
+<app-data-chart></app-data-chart>
+{{currentTime | date:'short'}} <br>
+{{currentTime | date:'long'}} <br>
+<div>{{ currentTime | date : "HH:mm:ss" }}</div>
+<div>{{ currentTime | date}}</div>
+
+{{ Amount | currency }} <br>
+
+{{name | reverse}}
+
+<div>
+  <p i18n="Simple message example@@message.simple">A simple message.</p>
+  <!-- ng serve --configuration=fr --open   -->
+</div>

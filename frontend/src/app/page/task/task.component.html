@@ -1,0 +1,420 @@
+<div style="min-height: 86vh">
+  <form [formGroup]="searchrform" class="d-inline">
+    <span class="d-flex mx-3">
+      <input
+        (input)="onInputChange($event)"
+        type="text"
+        class="form-control d-inline"
+        formControlName="data"
+        placeholder="Name, Email, Task, Discription"
+        style="width: 300px"
+      />
+      <!-- <button class="btn btn-secondary d-inline mx-2">Search</button> -->
+      <button class="btn btn-secondary mx-3" type="button" (click)="refresh()">
+        Refrash
+      </button>
+      <button
+        class="btn btn-lg btn btn-outline-dark"
+        type="button"
+        (click)="open(content)"
+      >
+        <i class="bi bi-funnel-fill"></i>
+      </button>
+    </span>
+  </form>
+  <button
+    class="btn btn-secondary position-absolute"
+    style="right: 20px; top: 80px"
+    (click)="onClick()"
+  >
+    Add new task
+  </button>
+
+  <div class="container rounded shadow my-3 p-2" style="width: auto">
+    <div>
+      <table
+        *ngIf="this.noDataFound === true"
+        class="table table-bordered table-hover table-striped"
+      >
+        <thead>
+          <tr class="">
+            <th class="border text-center p-3">No.</th>
+            <th class="border-end px-2 text-center py-2">Emaployee Name</th>
+            <th class="border-end px-2 text-center py-3">Task</th>
+            <th class="border-end px-2 text-center py-3">Discription</th>
+            <th class="border-end px-2 text-center py-3">Created By</th>
+            <th class="border-end px-2 text-center py-2 px-5">Start Date</th>
+            <th class="border-end px-2 text-center py-2 px-5">End Date</th>
+            <th class="border-end px-2 text-center py-3 px-5">Status</th>
+            <th class="border-end px-2 text-center py-2">Edit Status</th>
+            <th class="border-end px-2 text-center py-2">Edit Task</th>
+            <th class="border-end px-2 text-center py-2">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data; track item._id) {
+          <tr>
+            <td class="border text-center px-2">{{ $index + 1 }}</td>
+            <td class="fw-bold px-2 border-end text-center">
+              <span class="">{{ item.employeename }}</span>
+              <span class="px-2">{{ item.lastname }}</span>
+            </td>
+            <td class="border-end px-2 text-center">{{ item.task }}</td>
+            <td class="border-end px-2 text-center" style="max-width: 200px">
+              {{ item.discription }}
+            </td>
+            <td class="border-end px-2 text-center">
+              {{ item.email }}
+            </td>
+            <td class="border-end text-center">
+              {{ item.startdate.split("T")[0] }}
+            </td>
+            <td
+              class="border-end px-2 text-center"
+              [ngStyle]="{
+                'background-color': isExpired(item.enddate.split('T')[0])
+                  ? 'rgb(169, 116, 116)'
+                  : ''
+              }"
+            >
+              {{ item.enddate.split("T")[0] }}
+            </td>
+
+            <!-- {'background-color': item.enddate < new Date() ? 'red' : 'transparent'} -->
+
+            @if(item.status=="Pending"){
+            <td
+              class="border-end text-center"
+              style="background-color: rgb(255, 200, 200)"
+            >
+              {{ item.status }}
+            </td>
+            }@else if (item.status=="In Progress") {
+            <td
+              class="border-end px-2 text-center"
+              style="background-color: rgb(255, 243, 189)"
+            >
+              {{ item.status }}
+            </td>
+            }@else if (item.status=="Completed") {
+            <td
+              class="border-end px-2 text-center"
+              style="background-color: rgb(208, 255, 155)"
+            >
+              {{ item.status }}
+            </td>
+            }
+            <td class="border-end px-2 text-center">
+              <div class="col">
+                <div ngbDropdown class="d-inline-block">
+                  <button
+                    [disabled]="this.localEmail !== item.email"
+                    type="button"
+                    class="btn btn-outline-primary btn-sm"
+                    id="dropdownBasic1"
+                    ngbDropdownToggle
+                  >
+                    Change Status
+                  </button>
+                  <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                    <button
+                      (click)="changeStatus(item.uid, 'Pending')"
+                      ngbDropdownItem
+                    >
+                      Pending
+                    </button>
+                    <button
+                      (click)="changeStatus(item.uid, 'In Progress')"
+                      ngbDropdownItem
+                    >
+                      In Progress
+                    </button>
+                    <button
+                      (click)="changeStatus(item.uid, 'Completed')"
+                      ngbDropdownItem
+                    >
+                      Completed
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="border-end px-2 text-center">
+              <button
+                [disabled]="this.localEmail !== item.email"
+                class="btn btn-sm btn-secondary"
+                (click)="onEditTask(item.uid)"
+              >
+                Edit
+              </button>
+            </td>
+            <td class="border-end px-2 text-center">
+              <button
+                [disabled]="this.localEmail !== item.email"
+                (click)="onDelete(item.uid)"
+                class="btn btn-sm btn-danger"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      <h2>
+        <span class="text-center d-block fw-bold w-100">{{
+          this.message
+        }}</span>
+      </h2>
+    </div>
+  </div>
+
+  <!-- offcanvas -->
+  <ng-template #content let-offcanvas>
+    <div class="offcanvas-header" style="background-color: #e7e7e7">
+      <h4 class="offcanvas-title" id="offcanvas-basic-title">Filter Task</h4>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="offcanvas.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="offcanvas-body" style="background-color: #e7e7e7">
+      <div class="">
+        <!-- filter task by date and status ======== -->
+        <form
+          [formGroup]="searchfilterform"
+          (ngSubmit)="onSearchFilter()"
+          class="d-inline"
+        >
+          <div class="d-inline">
+            <span class=""> Filter Task By </span>
+
+            <select
+              formControlName="selectValue"
+              class="form-select d-inline my-2"
+              style="width: 120px; margin-left: 5px"
+              id=""
+            >
+              <option [defaultSelected]="true">--Select--</option>
+              <option value="startdate">Start Date</option>
+              <option value="enddate">End Date</option>
+              <option value="status">Status</option>
+            </select>
+
+            <div class="d-flex">
+              @if
+              (this.searchfilterform.get('selectValue')?.value==="startdate") {
+              <div class="d-inline">
+                <input
+                  type="date"
+                  class="form-control m-1"
+                  style="width: 250px"
+                  formControlName="startdatefrom"
+                />
+                <input
+                  *ngIf="
+                    this.searchfilterform.get('startdatefrom')?.value !== null
+                  "
+                  type="date"
+                  class="form-control m-1"
+                  style="width: 250px"
+                  formControlName="startdateto"
+                />
+                <select
+                  formControlName="status"
+                  class="form-select m-1"
+                  style="width: 250px"
+                  id=""
+                >
+                  <option [defaultSelected]="true">--Select Status--</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+              } @else if
+              (this.searchfilterform.get('selectValue')?.value==="enddate") {
+              <div class="d-inline">
+                <input
+                  type="date"
+                  class="form-control m-1"
+                  style="width: 250px"
+                  formControlName="enddatefrom"
+                />
+                <input
+                  *ngIf="
+                    this.searchfilterform.get('enddatefrom')?.value !== null
+                  "
+                  type="date"
+                  class="form-control m-1"
+                  style="width: 250px"
+                  formControlName="enddateto"
+                />
+                <select
+                  formControlName="status"
+                  class="form-select m-1"
+                  style="width: 250px"
+                  id=""
+                >
+                  <option [defaultSelected]="true">--Select Status--</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+              } @else if
+              (this.searchfilterform.get('selectValue')?.value==="status") {
+              <div class="d-inline">
+                <select
+                  formControlName="status"
+                  class="form-select m-1"
+                  style="width: 250px"
+                  id=""
+                >
+                  <option [defaultSelected]="true">--Select Status--</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+              } @if (this.searchfilterform.get('selectValue')?.value) {
+              <button
+                class="btn btn-secondary btn-sm w-100 m-1"
+                (click)="offcanvas.dismiss('Cross click')"
+              >
+                Search
+              </button>
+              }
+            </div>
+          </div>
+        </form>
+        <hr />
+
+        <!-- ==== search user by email -->
+
+        <!-- <form
+          action=""
+          [formGroup]="searchUser"
+          (ngSubmit)="onSearchUser(this.searchUser.get('email')?.value)"
+        >
+          <label for="" class="form-label"> Search user</label>
+          <div class="d-flex">
+            <input
+              type="email"
+              class="form-control"
+              style="max-width: 250px"
+              formControlName="email"
+              placeholder="Enter Email Id"
+            />
+            <button
+              class="btn btn-secondary btn-sm w-100 mx-2"
+              style="max-width: 80px"
+            >
+              Search
+            </button>
+          </div>
+          <span style="color: red">{{ this.userMessage }}</span>
+        </form> -->
+
+        <!-- <div
+          *ngIf="this.userData?.firstname"
+          class="container rounded d-flex align-items-center my-3 shadow"
+          style="height: 100px"
+        >
+          <div>
+            <div>
+              First Name = <span>{{ this.userData.firstname }}</span>
+            </div>
+            <div>
+              Last Name = <span>{{ this.userData.lastname }}</span>
+            </div>
+            <div>
+              Email = <span>{{ this.userData.email }}</span>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <hr /> -->
+
+        <!-- <div class="container" style="width: auto">
+          <h3>Users List</h3>
+          <table
+            class="table table-hover table-sm table-borderless table-secondary table- mt-3"
+          >
+            <thead>
+              <tr class="">
+                <th class="text-center">No.</th>
+                <th class="px-2 text-center">Check Box</th>
+                <th class="px-2 text-center">Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of allUsersData; track $index) {
+              <tr>
+                <td class="text-center">{{ $index + 1 }}</td>
+                <td ><input class="px-2 text-center form-check-input" type="checkbox"> Select</td>
+                <td class="px-2 text-center">
+                  {{ item.firstname }} {{ item.lastname }}
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div> -->
+
+        <div class="container" style="width: auto">
+          <h3>Users List</h3>
+          <table
+            class="table table-hover table-sm table-borderless table-secondary mt-3"
+          >
+            <thead>
+              <tr>
+                <th class="text-center">No.</th>
+                <th class="px-2 text-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [(ngModel)]="selectAll"
+                    (change)="toggleAllCheckboxes()"
+                  />
+                  Select All
+                </th>
+                <th class="px-2 text-center">Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of allUsersData; let i = index">
+                <td class="text-center">{{ i + 1 }}</td>
+                <td class="px-2 text-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [(ngModel)]="item.selected"
+                    (change)="updateSelectAll()"
+                  />
+                  Select
+                </td>
+                <td class="px-2 text-center">
+                  {{ item.firstname }} {{ item.lastname }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <button
+            class="btn btn-secondary w-100"
+            (click)="onClickFilterButton()"
+          >
+            Filter
+          </button>
+        </div>
+        <hr />
+
+        <!-- <button type="button" class="btn btn-outline-secondary" (click)="offcanvas.close('Save click')">Save</button> -->
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- <pre>{{ closeResult() }}</pre> -->
+</div>

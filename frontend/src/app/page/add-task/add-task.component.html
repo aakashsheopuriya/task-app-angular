@@ -1,0 +1,56 @@
+
+<div>
+  <div style="height: auto">
+    <div class="d-flex justify-content-center align-items-center">
+      <form [formGroup]="addTaskForm" (ngSubmit)="onSubmit()"
+        class="container m-5 p-4 border rounded shadow"
+        style="width: 600px; background-color: white"
+      >
+        <h2 class="text-center">Task Form</h2>
+
+        <label class="form-label">Employee Name :</label>
+        <input type="text" formControlName="employeename" class="form-control" required />
+        <br />
+
+        <label class="form-label">Task Created by :</label>
+        <input type="email" formControlName="email" class="form-control" required readonly />
+        <br />
+
+        <label class="form-label">Task :</label>
+        <input type="text" formControlName="task" class="form-control" required />
+        <br />
+
+        <label  class="form-label">Description :</label>
+        <textarea
+          id="description"
+          class="form-control"
+          rows="3"
+          formControlName="discription"
+          required
+        ></textarea>
+        <br />
+
+        <label  class="form-label">Start Date:</label>
+        <input type="date" formControlName="startdate" class="form-control" required />
+        <br />
+
+        
+        <label  class="form-label">End Date:</label>
+        <input type="date" formControlName="enddate"  class="form-control" required />
+        <br />
+
+        <label class="form-label">Status:</label>
+        <select  class="form-select" formControlName="status" required>
+          <!-- <option value="1">Select</option> -->
+          <option value="Pending">1 Pending</option>
+          <option value="In Progress">2 In Progress</option>
+          <option value="Completed">3 Completed</option>
+        </select>
+        <div *ngIf="this.message" class="text-danger text-center">{{this.message}}</div>
+        <br>
+        <button class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+

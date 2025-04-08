@@ -1,0 +1,65 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    background: radial-gradient(circle at center, #0f0f2b, #02010a);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .neon-loader {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+
+  .neon-loader::before,
+  .neon-loader::after {
+    content: '';
+    position: absolute;
+    border: 6px solid transparent;
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    animation: spin 1.5s linear infinite;
+  }
+
+  .neon-loader::before {
+    border-top-color: #0ff;
+    border-left-color: #0ff;
+    filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #0ff);
+  }
+
+  .neon-loader::after {
+    border-bottom-color: #f0f;
+    border-right-color: #f0f;
+    filter: drop-shadow(0 0 10px #f0f) drop-shadow(0 0 20px #f0f);
+    animation-direction: reverse;
+  }
+
+  .neon-text {
+    position: absolute;
+    top: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #0ff;
+    font-weight: bold;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+    animation: pulseText 2s infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes pulseText {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }

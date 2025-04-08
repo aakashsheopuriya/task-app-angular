@@ -1,0 +1,43 @@
+<div style="min-height: 83vh">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-lg p-4">
+          <div
+            class="text-center d-flex flex-column justify-content-center align-items-center"
+          >
+            <img
+              *ngIf="this.profileImage"
+              [src]="this.profileImage"
+              alt="Profile Photo"
+              class="rounded-circle img-thumbnail"
+              width="150"
+              height="150"
+            />
+            <a routerLink="/edit-user-profile" class="link-dark">
+              <i
+                class="bi bi-pencil-square p-1 rounded-2"
+                style="
+                  /* position: absolute;
+                  bottom: 120px;
+                  right: 230px; */
+                  font-weight: 600;
+                  background-color: rgb(202, 202, 202);
+                "
+                >Edit</i
+              >
+            </a>
+          </div>
+          <div class="card-body text-center">
+            <h4 class="card-title">
+              {{ this.userData?.firstname }} {{ this.userData?.lastname }}
+            </h4>
+            <p class="text-muted">
+              <i class="bi bi-envelope-fill"></i> {{ this.userData?.email }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

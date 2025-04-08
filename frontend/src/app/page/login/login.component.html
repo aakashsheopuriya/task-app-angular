@@ -1,0 +1,33 @@
+<div
+  class="d-flex justify-content-center align-items-center"
+  style="height: 100vh"
+>
+  <form
+    [formGroup]="loginform"
+    (ngSubmit)="onSubmit()"
+    class="container mt-4 p-4 border rounded shadow"
+    style="width: 500px; background-color: rgb(255, 255, 255)"
+  >
+    <h2 class="text-center">Login</h2>
+    <label class="form-label">Email : </label>
+    <input type="email" formControlName="email" id="" class="form-control" />
+    <span *ngIf="this.loginform.get('email')?.touched" style="color: red"
+      ><span *ngIf="this.loginform.get('email')?.invalid">
+        Enter Valid Email Id</span
+      ></span
+    ><br />
+    <label for=" " class="form-label">Password : </label>
+    <input type="password" formControlName="password" class="form-control" />
+    <span *ngIf="this.loginform.get('password')?.touched" style="color: red"
+      ><span *ngIf="this.loginform.get('password')?.invalid"
+        >Password is Required</span
+      ></span
+    >
+    <br /><br />
+    <button type="submit" class="btn btn-primary">submit</button>
+    <a routerLink="/signup" class="text-decoration-none mx-3"
+      >Go to Signup Page</a
+    ><br />
+    <span style="color: red">{{ this.message }}</span>
+  </form>
+</div>

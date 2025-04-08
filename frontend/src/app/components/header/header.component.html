@@ -1,0 +1,89 @@
+<ul
+  ngbNav
+  #nav="ngbNav"
+  [(activeId)]="active"
+  class="nav-tabs nav-pills p-2 shadow d-flex justify-content-between w-100"
+  style="
+    background-color: antiquewhite;
+    position: sticky;
+    top: 0px;
+    z-index: 20;
+  "
+>
+  <div class="d-flex">
+    <li
+      class="d-flex justify-content-center align-items-center fw-bold px-3 text-primary"
+    >
+      <img
+        ngSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1ktwa0cZlxhy6B5e0mR08HeqU4f5Inuhyggy5rt2aqWpE8mqhkGoXfhrHc_XKJLnvB9E&usqp=CAU"
+        width="40"
+        height="40"
+        alt="photo"
+        class="rounded-5"
+      />
+    </li>
+    <li [ngbNavItem]="1">
+      <button
+        (click)="onClickDashboard()"
+        style="margin-right: 10px"
+        ngbNavLink
+        class=""
+      >
+        Dashboard
+      </button>
+      <!-- <ng-template ngbNavContent> </ng-template> -->
+    </li>
+    <li [ngbNavItem]="2">
+      <button (click)="onClickTask()" ngbNavLink>Task</button>
+      <!-- <ng-template ngbNavContent> </ng-template> -->
+    </li>
+  </div>
+
+  <div class="d-flex">
+    <a routerLink="/user-profile">
+      <!-- class="position-fixed" style="right: 70px" -->
+      <li>
+        <img
+          *ngIf="profileImage"
+          [src]="profileImage"
+          class="image rounded-5 mx-1"
+          style="height: 40px; width: 40px; z-index: 200px"
+          alt="Profile Photo"
+        />
+      </li>
+    </a>
+
+    <!-- class="position-fixed" style="right: 20px" -->
+
+    <span>
+      <li class="mx-3">
+        <div class="d-inline-block" ngbDropdown #myDrop="ngbDropdown">
+          <button
+            type="button"
+            class="btn btn-outline-secondary me-2"
+            id="dropdownManual"
+            ngbDropdownAnchor
+            (focus)="myDrop.open()"
+          ></button>
+          <div
+            ngbDropdownMenu
+            aria-labelledby="dropdownManual"
+            class="rounded"
+            style="background-color: antiquewhite"
+          >
+            <button
+              ngbDropdownItem
+              (click)="onLogOut()"
+              class="btn"
+              style="background-color: antiquewhite; font-weight: 700"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      </li>
+    </span>
+  </div>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

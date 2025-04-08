@@ -1,0 +1,27 @@
+<div style="min-height: 84vh;">
+  <!-- <h1 *ngIf="monthData; else loading"></h1> -->
+  @if(monthList.length){
+  <div id="chart" class="container mt-4 p-4" style="width: 900px"  >
+    <div class="card shadow-lg p-4">
+      <apx-chart
+        [series]="chartOptions?.series"
+        [chart]="chartOptions?.chart"
+        [dataLabels]="chartOptions?.dataLabels"
+        [plotOptions]="chartOptions?.plotOptions"
+        [yaxis]="chartOptions?.yaxis"
+        [xaxis]="chartOptions?.xaxis"
+        [legend]="chartOptions?.legend"
+        [colors]="chartOptions?.colors"
+        [grid]="chartOptions?.grid"
+      ></apx-chart>
+    </div>
+  </div>
+  }
+
+  <!-- <ng-template #loading>
+    <div class="text-center" style="height: 90vh; width: 100% ; display: flex; align-items: center ; justify-content: center;">
+      <div class="neon-loader"></div>
+      <div class="neon-text">Initializing System...</div>
+    </div>
+  </ng-template> -->
+</div>

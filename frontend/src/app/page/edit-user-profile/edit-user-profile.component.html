@@ -1,0 +1,88 @@
+<!-- <app-header #childheader></app-header> -->
+<div class="" style="min-height: 100vh">
+  <div class="d-flex justify-content-center align-items-center">
+    <form
+      [formGroup]="editForm"
+      (ngSubmit)="onSubmit()"
+      class="container m-5 p-4 border rounded shadow bg-light"
+      style="width: 600px; background-color: white"
+    >
+      <h2 class="text-center">Edit Profile</h2>
+      <label class="form-label">First name : </label>
+      <input type="text" formControlName="firstname" class="form-control" />
+      <span
+        *ngIf="
+          this.editForm.get('firstname')?.touched ||
+          this.editForm.get('firstname')?.dirty
+        "
+        style="color: red"
+        ><span *ngIf="this.editForm.get('firstname')?.invalid">
+          First name is required</span
+        ></span
+      >
+      <br />
+      <label class="form-label">Last name : </label>
+      <input type="text" formControlName="lastname" class="form-control" />
+      <span
+        *ngIf="
+          this.editForm.get('lastname')?.touched ||
+          this.editForm.get('lastname')?.dirty
+        "
+        style="color: red"
+        ><span *ngIf="this.editForm.get('lastname')?.invalid">
+          Last name is required</span
+        ></span
+      >
+      <br />
+      <label class="form-label">Email : </label>
+      <input
+        type="text"
+        formControlName="email"
+        class="form-control"
+        readonly
+      />
+      <span
+        *ngIf="
+          this.editForm.get('email')?.touched ||
+          this.editForm.get('email')?.dirty
+        "
+        style="color: red"
+        ><span *ngIf="this.editForm.get('email')?.invalid"
+          >Please Enter Valid Email Id</span
+        ></span
+      >
+      <br />
+      <label class="form-label"> Profile Image :</label>
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <input
+            class="form-control"
+            style="height: 40px; width: 400px"
+            type="file"
+            accept="image/*"
+            (change)="handleImage($event)"
+            required
+          />
+        </div>
+        <div
+          class="image border border-2 p-1 rounded"
+          style="height: 110px; width: 110px"
+        >
+          <img
+            width="40%"
+            *ngIf="profileImage"
+            [src]="profileImage"
+            class="image"
+            style="height: 100px; width: 100px"
+            alt="Profile Photo"
+          />
+        </div>
+      </div>
+      <br />
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <br />
+      <div class="text-center" style="color: red">{{ this.message }}</div>
+    </form>
+  </div>
+</div>
+<!-- <app-footer></app-footer> -->

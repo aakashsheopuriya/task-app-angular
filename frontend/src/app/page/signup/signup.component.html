@@ -1,0 +1,99 @@
+<div class="" style="height: 100vh">
+  <div class="d-flex justify-content-center align-items-center">
+    <form
+      [formGroup]="signupForm"
+      (ngSubmit)="onSubmit()"
+      class="container m-5 p-4 border rounded shadow bg-light"
+      style="width: 600px; background-color: white"
+    >
+      <h2 class="text-center">Signup</h2>
+      <label class="form-label">First name : </label>
+      <input type="text" formControlName="firstname" class="form-control" />
+      <span
+        *ngIf="
+          this.signupForm.get('firstname')?.touched ||
+          this.signupForm.get('firstname')?.dirty
+        "
+        style="color: red"
+        ><span *ngIf="this.signupForm.get('firstname')?.invalid">
+          First name is required</span
+        ></span
+      >
+      <br />
+      <label class="form-label">Last name : </label>
+      <input type="text" formControlName="lastname" class="form-control" />
+      <span
+        *ngIf="
+          this.signupForm.get('lastname')?.touched ||
+          this.signupForm.get('lastname')?.dirty
+        "
+        style="color: red"
+        ><span *ngIf="this.signupForm.get('lastname')?.invalid">
+          Last name is required</span
+        ></span
+      >
+      <br />
+      <label class="form-label">Email : </label>
+      <input type="text" formControlName="email" class="form-control" />
+      <span
+        *ngIf="
+          this.signupForm.get('email')?.touched ||
+          this.signupForm.get('email')?.dirty
+        "
+        style="color: red"
+        ><span *ngIf="this.signupForm.get('email')?.invalid"
+          >Please Enter Valid Email Id</span
+        ></span
+      >
+      <br />
+
+      <label class="form-label">Password : </label>
+      <input type="text" formControlName="password" class="form-control" />
+      <span
+        *ngIf="
+          this.signupForm.get('password')?.touched ||
+          this.signupForm.get('password')?.dirty
+        "
+        style="color: red"
+      >
+        <span *ngIf="this.signupForm.get('password')?.invalid">
+          Invalid or Empty, Password must have at least one uppercase, lowercase
+          and number</span
+        >
+      </span>
+
+      <br />
+      <label class="form-label">Confirm Password : </label>
+      <input
+        type="text"
+        formControlName="confirmPassword"
+        class="form-control"
+      />
+      <span
+        *ngIf="
+          this.signupForm.get('confirmPassword')?.touched ||
+          this.signupForm.get('confirmPassword')?.dirty
+        "
+        style="color: red"
+        ><span *ngIf="this.signupForm.get('confirmPassword')?.invalid">
+          confirm Password is required</span
+        ></span
+      ><br />
+      <div
+        *ngIf="this.signupForm.hasError('passwordMismatch')"
+        style="color: red"
+      >
+        Password not matched
+      </div>
+
+      <br />
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <span
+        ><a routerLink="/login" class="text-decoration-none mx-3"
+          >Go to login</a
+        ></span
+      ><br />
+      <div class="text-center" style="color: red">{{ this.message }}</div>
+    </form>
+  </div>
+</div>
