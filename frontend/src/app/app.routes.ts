@@ -20,7 +20,7 @@ export const routes: Routes = [
     {path:'dashboard',component:DashboardComponent , canActivate:[tokenGuard]},
     {path:'add-task',component:AddTaskComponent , canActivate:[tokenGuard]},
     {path:'task', loadComponent: ()=> import('./page/task/task.component').then(m=>m.TaskComponent) , canActivate:[tokenGuard]},
-    {path:'task',component:TaskComponent , canActivate:[tokenGuard]},
+    // {path:'task',component:TaskComponent , canActivate:[tokenGuard]},
     {path:'user-profile',loadComponent: ()=>import('./page/user-profile/user-profile.component').then(m=>m.UserProfileComponent) , data: { preload: true }},
     // {path:'user-profile',component:UserProfileComponent, canActivate:[tokenGuard]},
     {path:'edit-user-profile',component:EditUserProfileComponent , canActivate:[tokenGuard]},

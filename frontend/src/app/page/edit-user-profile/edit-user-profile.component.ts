@@ -23,7 +23,7 @@ export class EditUserProfileComponent {
   // @ViewChild(HeaderComponent) childheader!: HeaderComponent;
 
   // passwordValidator = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
-  
+
   email = localStorage.getItem('email');
   userData: any;
   fileToUpload: any;
@@ -79,7 +79,6 @@ export class EditUserProfileComponent {
     }
     if (this.editForm.valid) {
       const formData = new FormData();
-
       Object.keys(this.editForm.controls).forEach((key) => {
         const value = this.editForm.get(key)?.value;
         if (value !== null && value !== undefined && key !== 'image') {

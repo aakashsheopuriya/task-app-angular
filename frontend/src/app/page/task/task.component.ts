@@ -19,7 +19,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-task',
@@ -28,7 +27,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
     NgbDropdownModule,
     NgFor,
     NgIf,
-    NgStyle,
     FormsModule,
   ],
   templateUrl: './task.component.html',
@@ -46,6 +44,7 @@ export class TaskComponent {
   userMessage: any;
   serchData: any;
   noDataFound: any;
+  userImaage:any
   localEmail = localStorage.getItem('email');
   // userSignal:any
 

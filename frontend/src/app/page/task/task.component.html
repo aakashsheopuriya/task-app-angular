@@ -43,9 +43,9 @@
             <th class="border-end px-2 text-center py-3">Task</th>
             <th class="border-end px-2 text-center py-3">Discription</th>
             <th class="border-end px-2 text-center py-3">Created By</th>
-            <th class="border-end px-2 text-center py-2 px-5">Start Date</th>
-            <th class="border-end px-2 text-center py-2 px-5">End Date</th>
-            <th class="border-end px-2 text-center py-3 px-5">Status</th>
+            <th class="border-end px-5 text-center py-2">Start Date</th>
+            <th class="border-end px-5 text-center py-2">End Date</th>
+            <th class="border-end px-5 text-center py-3">Status</th>
             <th class="border-end px-2 text-center py-2">Edit Status</th>
             <th class="border-end px-2 text-center py-2">Edit Task</th>
             <th class="border-end px-2 text-center py-2">Delete</th>
@@ -69,18 +69,19 @@
             <td class="border-end text-center">
               {{ item.startdate.split("T")[0] }}
             </td>
-            <td
-              class="border-end px-2 text-center"
-              [ngStyle]="{
-                'background-color': isExpired(item.enddate.split('T')[0])
-                  ? 'rgb(169, 116, 116)'
-                  : ''
-              }"
-            >
-              {{ isExpired(item.enddate.split('T')[0]) ? 'Expaired' : item.enddate.split("T")[0] }}
-            </td>
 
-            @if(item.status=="Pending"){
+            @if(isExpired(item.enddate.split('T')[0])){
+            <td
+              class="border-end px-2 text-center animate-pulse"
+              style="background-color: rgb(169, 116, 116)"
+            >
+              Expaired
+            </td>
+            } @else {
+            <td class="border-end px-2 text-center">
+              {{ item.enddate.split("T")[0] }}
+            </td>
+            } @if(item.status=="Pending"){
             <td
               class="border-end text-center"
               style="background-color: rgb(255, 200, 200)"
@@ -369,7 +370,7 @@
           >
             <thead>
               <tr>
-                <th class="text-center">No.</th>
+                <th class="text-center">Img</th>
                 <th class="px-2 text-center">
                   <input
                     class="form-check-input"
@@ -384,7 +385,15 @@
             </thead>
             <tbody>
               <tr *ngFor="let item of allUsersData; let i = index">
-                <td class="text-center">{{ i + 1 }}</td>
+                <!-- <td class="text-center">{{ i + 1 }}</td> -->
+                <td class="text-center">
+                  <img
+                    src="{{`http://localhost:4000/uploads/${ item.image }`}}"
+                    height="30px"
+                    width="30px"
+                    class="rounded-5"
+                  />
+                </td>
                 <td class="px-2 text-center">
                   <input
                     class="form-check-input"
@@ -402,7 +411,7 @@
           </table>
           <button
             class="btn btn-secondary w-100"
-            (click)="onClickFilterButton()"
+            (click)="onClickFilterButton(); offcanvas.dismiss('Cross click')"
           >
             Filter
           </button>
