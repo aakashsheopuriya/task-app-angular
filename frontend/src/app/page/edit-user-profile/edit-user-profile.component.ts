@@ -1,4 +1,4 @@
-import { Component, ViewChild, viewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import {
   FormControl,
@@ -20,15 +20,14 @@ import { UserService } from '../../services/user.service';
 export class EditUserProfileComponent {
   constructor(public service: ApiService, public userservice: UserService) {}
 
-  @ViewChild(HeaderComponent) childheader!: HeaderComponent;
+  // @ViewChild(HeaderComponent) childheader!: HeaderComponent;
 
-  passwordVelidator = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+  // passwordValidator = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+  
   email = localStorage.getItem('email');
   userData: any;
   fileToUpload: any;
   profileImage: any;
-  imageUrlFile: any;
-  formDataSend: any;
   message: any;
 
   editForm = new FormGroup({
@@ -49,12 +48,23 @@ export class EditUserProfileComponent {
     reader.readAsDataURL(this.fileToUpload);
   }
 
+  async convertImageUrlToFile(imageUrl: string, fileName: string) {
+    const res = await fetch(imageUrl);
+    const blob = await res.blob();
+    const fileType = blob.type;
+    return new File([blob], fileName, { type: fileType });
+  }
+
   ngOnInit() {
     this.service.onGetUser({ email: this.email }).subscribe((res: any) => {
       this.userData = res.data;
       this.profileImage = res.image;
 
-      console.log(res.image);
+      this.convertImageUrlToFile(this.profileImage, 'image.jpg').then(
+        (file) => {
+          this.fileToUpload = file;
+        }
+      );
       this.editForm.patchValue({
         firstname: this.userData?.firstname,
         lastname: this.userData?.lastname,

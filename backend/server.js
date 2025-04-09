@@ -6,8 +6,12 @@ const taskRoutes = require("./routes/task.routes");
 
 const app = express();
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
 app.use(cors({ origin: "*" }));
+app.use('/uploads', express.static('uploads', {
+  setHeaders: (res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+  }
+}));
 dbConnect();
 
 let port = 4000;

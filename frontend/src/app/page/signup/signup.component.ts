@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { confirmPasswordValidator } from '../../customValidator/password.validator';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
@@ -12,9 +17,9 @@ import { NgIf } from '@angular/common';
   styleUrl: './signup.component.css',
 })
 export class SignupComponent {
-  constructor(public router:Router, public service:ApiService){}
+  constructor(public router: Router, public service: ApiService) {}
 
-  passwordVelidator = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+  passwordValidator = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
   formdata: any;
   matched = false;
   message: any = '';
@@ -26,7 +31,7 @@ export class SignupComponent {
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
         Validators.required,
-        Validators.pattern(this.passwordVelidator),
+        Validators.pattern(this.passwordValidator),
       ]),
       confirmPassword: new FormControl('', [Validators.required]),
       // role: new FormControl('', Validators.required),
@@ -35,17 +40,16 @@ export class SignupComponent {
       validators: [confirmPasswordValidator('password', 'confirmPassword')],
     }
   );
-  
-  onSubmit(){
+
+  onSubmit() {
     if (this.signupForm.valid) {
       this.formdata = this.signupForm.value;
       this.onSignUp();
       console.log(this.signupForm.controls);
-      
     } else {
-      Object.keys(this.signupForm.controls).forEach(field => { 
-        const control = this.signupForm.get(field);  
-        control?.markAsTouched({ onlySelf: true }); 
+      Object.keys(this.signupForm.controls).forEach((field) => {
+        const control = this.signupForm.get(field);
+        control?.markAsTouched({ onlySelf: true });
       });
     }
   }
