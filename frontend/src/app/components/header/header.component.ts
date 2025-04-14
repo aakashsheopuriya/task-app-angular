@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgIf, NgOptimizedImage } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { UserService } from '../../services/user.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -22,7 +23,6 @@ export class HeaderComponent {
   constructor(
     public router: Router,
     public service: ApiService,
-    public activatedRoute: ActivatedRoute,
     public userservice: UserService
   ) {
     this.router.events.subscribe(() => {
@@ -34,11 +34,19 @@ export class HeaderComponent {
         this.active = 3;
       }
     });
+
+    // this.router.events
+    //   .pipe(filter((event) => event instanceof NavigationEnd))
+    //   .subscribe((event: NavigationEnd) => {
+    //     const fullUrl = location.origin + event.urlAfterRedirects;
+    //     console.log("current route",fullUrl);
+    //   });
   }
 
   active: number = 1;
   userData: any;
   profileImage: any;
+  fullUrl: any;
 
   ngOnInit() {
     this.userservice.profileImage$.subscribe((image) => {

@@ -10,11 +10,15 @@
         style="width: 300px"
       />
       <!-- <button class="btn btn-secondary d-inline mx-2">Search</button> -->
-      <button class="btn btn-secondary mx-3" type="button" (click)="refresh()">
+      <button
+        class="btn btn-secondary mx-3 hover:scale-110"
+        type="button"
+        (click)="refresh()"
+      >
         Refrash
       </button>
       <button
-        class="btn btn-lg btn btn-outline-dark"
+        class="btn btn-lg btn btn-outline-dark hover:scale-110"
         type="button"
         (click)="open(content)"
       >
@@ -23,15 +27,23 @@
     </span>
   </form>
   <button
-    class="btn btn-secondary position-absolute"
-    style="right: 20px; top: 80px"
+    class="btn btn-secondary position-absolute hover:scale-110"
+    style="right: 20px; top: 75px"
     (click)="onClick()"
   >
     Add new task
   </button>
 
-  <div class="container rounded shadow my-3 p-2" style="width: auto">
-    <div>
+  <div
+    class="container-lg rounded shadow my-3 p-2 overflow-auto"
+    style="width: auto"
+  >
+    <div
+      infiniteScroll
+      [infiniteScrollDistance]="1"
+      [infiniteScrollThrottle]="1"
+      (scrolled)="onScroll()"
+    >
       <table
         *ngIf="this.noDataFound === true"
         class="table table-bordered table-hover table-striped"
@@ -52,7 +64,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (item of data; track item._id) {
+          @for (item of data; track $index) {
           <tr>
             <td class="border text-center px-2">{{ $index + 1 }}</td>
             <td class="fw-bold px-2 border-end text-center">
@@ -141,7 +153,7 @@
             <td class="border-end px-2 text-center">
               <button
                 [disabled]="this.localEmail !== item.email"
-                class="btn btn-sm btn-secondary"
+                class="btn btn-sm btn-secondary hover:scale-110"
                 (click)="onEditTask(item.uid)"
               >
                 Edit
@@ -151,7 +163,7 @@
               <button
                 [disabled]="this.localEmail !== item.email"
                 (click)="onDelete(item.uid)"
-                class="btn btn-sm btn-danger"
+                class="btn btn-sm btn-danger hover:scale-110"
               >
                 Delete
               </button>
@@ -166,6 +178,8 @@
         }}</span>
       </h2>
     </div>
+
+    <div *ngIf="this.loading">Loading...</div>
   </div>
 
   <!-- offcanvas -->
@@ -411,7 +425,7 @@
           </table>
           <button
             class="btn btn-secondary w-100"
-            (click)="onClickFilterButton(); offcanvas.dismiss('Cross click')"
+            (click)="onClickFilterCheckBox(); offcanvas.dismiss('Cross click')"
           >
             Filter
           </button>

@@ -76,6 +76,36 @@ const getAllTask = async (req, res) => {
   }
 };
 
+const getLimitedTask = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const userFind = await taskModel
+      .find()
+      .sort({ enddate: 1 })
+      .skip(skip)
+      .limit(limit);
+    const total = await taskModel.countDocuments();
+    if (userFind) {
+      res.send({
+        message: "successfully get tasks",
+        status: 1,
+        data: userFind,
+        total,
+      });
+    } else {
+      res.send({
+        message: "Failed",
+        status: 0,
+      });
+    }
+  } catch (err) {
+    console.log("error in catch block", err);
+  }
+};
+
 const addTask = async (req, res) => {
   try {
     const {
@@ -214,7 +244,10 @@ const statusChange = async (req, res) => {
 
 const getsearchtask = async (req, res) => {
   try {
-    console.log(req.body);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    console.log(req.query);
     const {
       selectValue,
       startdatefrom,
@@ -245,12 +278,19 @@ const getsearchtask = async (req, res) => {
     ) {
       const tasks = await taskModel
         .find({ status: status })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({ status: status })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           status: 1,
           data: tasks,
+          total: total,
         });
       }
     } else if (
@@ -261,12 +301,19 @@ const getsearchtask = async (req, res) => {
     ) {
       const tasks = await taskModel
         .find({ status: status })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({ status: status })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success get",
           status: 1,
           data: tasks,
+          total: total,
         });
       }
     } else if (
@@ -280,12 +327,22 @@ const getsearchtask = async (req, res) => {
           enddate: { $gte: enddatefrom, $lte: enddateto },
           status: status,
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          enddate: { $gte: enddatefrom, $lte: enddateto },
+          status: status,
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success ",
           status: 1,
           data: tasks,
+          total: total,
         });
       }
     } else if (
@@ -298,12 +355,21 @@ const getsearchtask = async (req, res) => {
         .find({
           enddate: { $gte: enddatefrom, $lte: enddateto },
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          enddate: { $gte: enddatefrom, $lte: enddateto },
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           data: tasks,
           status: 1,
+          total: total,
         });
       }
     } else if (
@@ -316,12 +382,21 @@ const getsearchtask = async (req, res) => {
         .find({
           enddate: enddatefrom,
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          enddate: enddatefrom,
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           data: tasks,
           status: 1,
+          total,
         });
       }
     } else if (
@@ -335,12 +410,22 @@ const getsearchtask = async (req, res) => {
           enddate: enddatefrom,
           status: status,
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          enddate: enddatefrom,
+          status: status,
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           data: tasks,
           status: 1,
+          total,
         });
       }
     } else if (
@@ -351,12 +436,19 @@ const getsearchtask = async (req, res) => {
     ) {
       const tasks = await taskModel
         .find({ status: status })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({ status: status })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success get",
           status: 1,
           data: tasks,
+          total,
         });
       }
     } else if (
@@ -370,12 +462,22 @@ const getsearchtask = async (req, res) => {
           startdate: { $gte: startdatefrom, $lte: startdateto },
           status: status,
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          startdate: { $gte: startdatefrom, $lte: startdateto },
+          status: status,
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           data: tasks,
           status: 1,
+          total,
         });
       }
     } else if (
@@ -388,12 +490,21 @@ const getsearchtask = async (req, res) => {
         .find({
           startdate: { $gte: startdatefrom, $lte: startdateto },
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          startdate: { $gte: startdatefrom, $lte: startdateto },
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           data: tasks,
           status: 1,
+          total,
         });
       }
     } else if (
@@ -407,12 +518,22 @@ const getsearchtask = async (req, res) => {
           startdate: startdatefrom,
           status: status,
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          startdate: startdatefrom,
+          status: status,
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           data: tasks,
           status: 1,
+          total,
         });
       }
     } else if (
@@ -425,12 +546,21 @@ const getsearchtask = async (req, res) => {
         .find({
           startdate: startdatefrom,
         })
-        .sort({ enddate: 1 });
+        .sort({ enddate: 1 })
+        .skip(skip)
+        .limit(limit);
+      const total = await taskModel
+        .find({
+          startdate: startdatefrom,
+        })
+        .sort({ enddate: 1 })
+        .countDocuments();
       if (tasks) {
         res.send({
           message: "success",
           data: tasks,
           status: 1,
+          total,
         });
       }
     } else {
@@ -446,6 +576,10 @@ const getsearchtask = async (req, res) => {
 
 const getsearchtaskbyName = async (req, res) => {
   try {
+    console.log("req", req.query);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
     let { inputdata } = req.body;
     const userFind = await taskModel
       .find({
@@ -457,12 +591,26 @@ const getsearchtaskbyName = async (req, res) => {
           { status: { $regex: inputdata, $options: "i" } },
         ],
       })
-      .sort({ enddate: 1 });
+      .sort({ enddate: 1 })
+      .skip(skip)
+      .limit(limit);
+    const total = await taskModel
+      .find({
+        $or: [
+          { employeename: { $regex: inputdata, $options: "i" } },
+          { email: { $regex: inputdata, $options: "i" } },
+          { discription: { $regex: inputdata, $options: "i" } },
+          { task: { $regex: inputdata, $options: "i" } },
+          { status: { $regex: inputdata, $options: "i" } },
+        ],
+      })
+      .countDocuments();
     if (userFind.length !== 0) {
       res.send({
         message: "successfully get tasks",
         status: 1,
         data: userFind,
+        total: total,
       });
     } else {
       res.send({
@@ -477,16 +625,28 @@ const getsearchtaskbyName = async (req, res) => {
 
 const getTaskByFilterEmail = async (req, res) => {
   let { selectedEmails } = req.body;
+  console.log(req.query);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
   console.log(selectedEmails);
   if (selectedEmails.length > 0) {
     const data = await taskModel
       .find({ email: { $in: selectedEmails } })
-      .sort({ enddate: 1 });
+      .sort({ enddate: 1 })
+      .skip(skip)
+      .limit(limit);
+    const total = await taskModel
+      .find({ email: { $in: selectedEmails } })
+      .sort({ enddate: 1 })
+      .countDocuments();
+    console.log("total", total, "data", data.length);
     if (data.length > 0) {
       res.send({
         status: 1,
         message: "success",
         data: data,
+        total,
       });
     } else {
       res.send({
@@ -506,6 +666,7 @@ module.exports = {
   getTask,
   getTaskbyUid,
   getAllTask,
+  getLimitedTask,
   addTask,
   deleteTask,
   statusChange,

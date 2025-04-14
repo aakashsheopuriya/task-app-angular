@@ -8,8 +8,7 @@ import { Observable } from 'rxjs';
 export class ApiService {
   constructor(private http: HttpClient) {}
 
-
-// user routes
+  // user routes
   onLogin(user: any): Observable<any> {
     const url = 'http://localhost:4000/user/login';
     return this.http.post(url, user);
@@ -35,7 +34,6 @@ export class ApiService {
     return this.http.post(url, user);
   }
 
-
   // task Routes
   onGetTask(user: any): Observable<any> {
     const url = 'http://localhost:4000/task/get-task';
@@ -53,6 +51,10 @@ export class ApiService {
     const url = 'http://localhost:4000/task/get-all-task';
     return this.http.get(url);
   }
+  onGetLimitedTask(page: number, limit: number) {
+    const url = `http://localhost:4000/task/get-limited-task?page=${page}&limit=${limit}`;
+    return this.http.get(url);
+  }
   onDeleteTask(user: any): Observable<any> {
     const url = 'http://localhost:4000/task/task-delete';
     return this.http.post(url, user);
@@ -61,18 +63,18 @@ export class ApiService {
     const url = 'http://localhost:4000/task/task-status-change';
     return this.http.post(url, user);
   }
-  onSearchTask(user: any): Observable<any> {
-    const url = 'http://localhost:4000/task/task-search';
+  onSearchTask(user: any, page: number, limit: number): Observable<any> {
+    const url = `http://localhost:4000/task/task-search?page=${page}&limit=${limit}`;
     return this.http.post(url, user);
   }
 
-  onSearchTaskbyName(user: any): Observable<any> {
-    const url = 'http://localhost:4000/task/task-search-data';
+  onSearchTaskbyName(user: any, page: number, limit: number): Observable<any> {
+    const url = `http://localhost:4000/task/task-search-data?page=${page}&limit=${limit}`;
     return this.http.post(url, user);
   }
-  
-  onSearchTaskbyEmail(user: any): Observable<any> {
-    const url = 'http://localhost:4000/task/task-search-email-data';
+
+  onSearchTaskbyEmail(user: any, page: number, limit: number): Observable<any> {
+    const url = `http://localhost:4000/task/task-search-email-data?page=${page}&limit=${limit}`;
     return this.http.post(url, user);
   }
 }

@@ -8,6 +8,8 @@ Routes.post("/get-task-uid", taskController.getTaskbyUid);
 
 Routes.get("/get-all-task", taskController.getAllTask);
 
+Routes.get("/get-limited-task", taskController.getLimitedTask);
+
 Routes.post("/add-task", taskController.addTask);
 
 Routes.post("/task-delete", taskController.deleteTask);

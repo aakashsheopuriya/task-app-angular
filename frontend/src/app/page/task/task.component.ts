@@ -18,7 +18,8 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { NgFor, NgIf, NgStyle } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
 @Component({
   selector: 'app-task',
@@ -28,6 +29,7 @@ import { NgFor, NgIf, NgStyle } from '@angular/common';
     NgFor,
     NgIf,
     FormsModule,
+    InfiniteScrollDirective,
   ],
   templateUrl: './task.component.html',
   styleUrl: './task.component.css',
@@ -36,17 +38,21 @@ export class TaskComponent {
   private offcanvasService = inject(NgbOffcanvas);
   constructor(public router: Router, public service: ApiService) {}
 
-  data: any;
-  status: any;
+  data: any[] = [];
   allUsersData: any;
   userData: any;
   message: any;
-  userMessage: any;
   serchData: any;
+  searchResult = false;
   noDataFound: any;
-  userImaage:any
   localEmail = localStorage.getItem('email');
-  // userSignal:any
+  page: number = 1;
+  limit: number = 10;
+  loading: boolean = false;
+  total: number = 0;
+  onInputChangeflag = false;
+  onSearchFilterflag = false;
+  onClickFilterCheckBoxflag = false;
 
   searchfilterform = new FormGroup({
     selectValue: new FormControl(''),
@@ -80,9 +86,33 @@ export class TaskComponent {
   }
 
   getdata() {
-    this.service.onGetAllTask().subscribe((res: any) => {
-      this.data = res.data;
-    });
+    if (this.loading) return;
+    this.loading = true;
+    this.service
+      .onGetLimitedTask(this.page, this.limit)
+      .subscribe((res: any) => {
+        if (res.status === 1) {
+          this.data.push(...res.data);
+          this.total = res.total;
+          this.page++;
+        }
+        this.loading = false;
+      });
+  }
+
+  getdata2() {
+    if (this.loading) return;
+    this.loading = true;
+    this.service
+      .onGetLimitedTask(this.page, this.limit)
+      .subscribe((res: any) => {
+        if (res.status === 1) {
+          this.data = res.data;
+          this.total = res.total;
+          // this.page++;
+        }
+        this.loading = false;
+      });
   }
 
   getAllUsers() {
@@ -100,6 +130,8 @@ export class TaskComponent {
       console.log('res', res);
     });
     setTimeout(() => {
+      this.data = [];
+      this.page = 1;
       this.getdata();
     }, 500);
   }
@@ -110,11 +142,14 @@ export class TaskComponent {
     });
 
     setTimeout(() => {
+      this.page = 1;
+      this.data = [];
       this.getdata();
     }, 200);
   }
 
   onSearchFilter() {
+    this.onSearchFilterflag = true;
     this.serchData = this.searchfilterform.value;
     if (
       this.searchfilterform.get('startdatefrom')?.value === null &&
@@ -127,39 +162,84 @@ export class TaskComponent {
       this.noDataFound = false;
     } else {
       console.log('this.serchData', this.searchfilterform.value);
-      this.service.onSearchTask(this.serchData).subscribe((res: any) => {
-        console.log(res);
-        this.data = res.data;
-        if (res.data.length === 0) {
-          this.message = 'No result Found';
-          this.noDataFound = false;
-          this.getdata();
-        } else {
-          this.message = null;
-          this.noDataFound = true;
-        }
-      });
-      this.searchfilterform.patchValue({
-        startdatefrom: null,
-        startdateto: null,
-        enddatefrom: null,
-        enddateto: null,
-        status: null,
-        selectValue: null,
-      });
+      this.page = 1;
+      this.service
+        .onSearchTask(this.serchData, this.page, this.limit)
+        .subscribe((res: any) => {
+          if (res.data.length === 0) {
+            this.page = 1;
+            this.message = 'No result Found';
+            this.noDataFound = false;
+            this.searchResult = false;
+            this.onSearchFilterflag = false;
+            this.searchfilterform.patchValue({
+              startdatefrom: null,
+              startdateto: null,
+              enddatefrom: null,
+              enddateto: null,
+              status: null,
+              selectValue: null,
+            });
+          } else {
+            this.onSearchFilterflag = true;
+            this.searchResult = true;
+            this.data = res.data;
+            this.total = res.total;
+            this.message = null;
+            this.noDataFound = true;
+          }
+        });
+      // this.searchfilterform.patchValue({
+      //   startdatefrom: null,
+      //   startdateto: null,
+      //   enddatefrom: null,
+      //   enddateto: null,
+      //   status: null,
+      //   selectValue: null,
+      // });
     }
   }
 
-  // onSearchUser(email: any) {
-  //   this.service.onGetUser({ email }).subscribe((res: any) => {
-  //     this.userData = res.data;
-  //     this.userMessage = '';
-  //     console.log(res);
-  //     if (res.status === 0) {
-  //       this.userMessage = res.message;
-  //     }
-  //   });
-  // }
+  onSearchFilterScroll() {
+    this.page++;
+    this.onSearchFilterflag = true;
+    this.serchData = this.searchfilterform.value;
+    if (
+      this.searchfilterform.get('startdatefrom')?.value === null &&
+      this.searchfilterform.get('startdateto')?.value === null &&
+      this.searchfilterform.get('enddatefrom')?.value === null &&
+      this.searchfilterform.get('enddateto')?.value === null &&
+      this.searchfilterform.get('status')?.value === null
+    ) {
+      this.message = 'Search field is empty ';
+      this.noDataFound = false;
+    } else {
+      console.log('this.serchData', this.searchfilterform.value);
+      this.service
+        .onSearchTask(this.serchData, this.page, this.limit)
+        .subscribe((res: any) => {
+          if (res.data.length === 0) {
+            this.onSearchFilterflag = false;
+            this.searchResult = false;
+            this.searchfilterform.patchValue({
+              startdatefrom: null,
+              startdateto: null,
+              enddatefrom: null,
+              enddateto: null,
+              status: null,
+              selectValue: null,
+            });
+          } else {
+            this.searchResult = true;
+            this.data.push(...res.data);
+            this.total = res.total;
+            console.log(this.data.length);
+            this.message = null;
+            this.noDataFound = true;
+          }
+        });
+    }
+  }
 
   // ---------
 
@@ -173,79 +253,144 @@ export class TaskComponent {
     this.selectAll = this.allUsersData.every((user: any) => user.selected);
   }
 
-  onClickFilterButton() {
+  onClickFilterCheckBox() {
+    this.page = 1;
+    this.onClickFilterCheckBoxflag = true;
     const selectedEmails = this.allUsersData
       .filter((user: any) => user.selected)
       .map((user: any) => user.email);
-
     console.log('Selected emails:', selectedEmails);
-
     if (selectedEmails.length === 0) {
       this.noDataFound = false;
       this.message = 'Select at least one user';
       return;
     }
-
     this.service
-      .onSearchTaskbyEmail({ selectedEmails: selectedEmails })
+      .onSearchTaskbyEmail(
+        { selectedEmails: selectedEmails },
+        this.page,
+        this.limit
+      )
       .subscribe((res: any) => {
-        console.log('res', res);
         if (res.status == 1) {
-          console.log(res.data);
+          this.total = res.total;
           this.noDataFound = true;
           this.data = res.data;
           this.message = null;
+          this.searchResult = true;
         } else {
-          console.log(res.data);
+          this.onClickFilterCheckBoxflag = false;
+          this.searchResult = false;
           this.noDataFound = false;
           this.message = 'No result Found';
         }
       });
   }
 
-  // onSearchByNameOrEmail(inputdata: any) {
-  //   console.log('res', inputdata);
-  //   if (!inputdata) {
-  //     this.message = 'Field is Empty';
-  //   } else {
-  //     this.service.onSearchTaskbyName({ inputdata }).subscribe((res: any) => {
-  //       console.log(res);
-  //       if (res.status === 0) {
-  //         this.message = res.message;
-  //       } else {
-  //         this.data = res.data;
-  //         this.message = '';
-  //       }
-  //     });
-  //   }
-  // }
+  onClickFilterCheckBoxScroll() {
+    this.page++;
+    this.onClickFilterCheckBoxflag = true;
+    const selectedEmails = this.allUsersData
+      .filter((user: any) => user.selected)
+      .map((user: any) => user.email);
+    console.log('Selected emails:', selectedEmails);
+    console.log(this.limit, this.page);
+    this.service
+      .onSearchTaskbyEmail(
+        { selectedEmails: selectedEmails },
+        this.page,
+        this.limit
+      )
+      .subscribe((res: any) => {
+        console.log('res', res);
+        if (res.status == 1) {
+          this.noDataFound = true;
+          this.data.push(...res.data);
+          this.message = null;
+          this.searchResult = true;
+        } else {
+          this.onClickFilterCheckBoxflag = false;
+          this.searchResult = false;
+        }
+      });
+  }
 
+  // ---------------
   inputValue: string = '';
   onInputChange(event: Event) {
+    this.onInputChangeflag = true;
     this.inputValue = (event.target as HTMLInputElement).value;
     if (this.inputValue.length > 2) {
-      if (!this.inputValue) {
-        this.message = 'Field is Empty';
-      } else {
-        setTimeout(() => {
-          this.service
-            .onSearchTaskbyName({ inputdata: this.inputValue })
-            .subscribe((res: any) => {
-              console.log(res);
-              if (res.status === 0) {
-                this.noDataFound = false;
-                this.message = res.message;
-              } else {
-                this.noDataFound = true;
-                this.data = res.data;
-                this.message = null;
-              }
-            });
-        }, 100);
-      }
+      setTimeout(() => {
+        this.service
+          .onSearchTaskbyName(
+            { inputdata: this.inputValue },
+            this.page,
+            this.limit
+          )
+          .subscribe((res: any) => {
+            console.log(res);
+            if (res.status === 0) {
+              this.data = [];
+              this.page = 1;
+              this.getdata2();
+              this.searchResult = false;
+              this.noDataFound = false;
+              this.message = res.message;
+              this.total = res.total;
+              this.onInputChangeflag = false;
+            } else {
+              this.searchResult = true;
+              this.noDataFound = true;
+              this.data = res.data;
+              this.message = null;
+              this.total = res.total;
+            }
+          });
+      }, 100);
     } else {
+      this.searchResult = false;
+      this.page = 1;
+      this.getdata2();
       this.noDataFound = true;
-      this.getdata();
+      this.message = null;
+    }
+  }
+  onInputChangeOnScroll() {
+    if (this.inputValue.length > 2) {
+      setTimeout(() => {
+        this.page++;
+        this.service
+          .onSearchTaskbyName(
+            { inputdata: this.inputValue },
+            this.page,
+            this.limit
+          )
+          .subscribe((res: any) => {
+            console.log(res);
+            if (res.status === 0) {
+              this.onInputChangeflag = false;
+              // this.data = [];
+              // this.page = 1;
+              // this.getdata2();
+              this.searchResult = false;
+              // this.noDataFound = false;
+              // this.message = res.message;
+              return;
+            } else {
+              this.total = res.total;
+              this.searchResult = true;
+              this.noDataFound = true;
+              this.data.push(...res.data);
+              this.message = null;
+            }
+          });
+      }, 100);
+    } else {
+      this.searchResult = false;
+      this.page = 1;
+      this.getdata2();
+      this.noDataFound = true;
       this.message = null;
     }
   }
@@ -254,20 +399,24 @@ export class TaskComponent {
     this.router.navigate(['/add-task'], { state: { uid: uid } });
   }
 
-  onDeleteUser(email: any) {
-    console.log(email);
-    this.service.onDeleteUser({ email }).subscribe((res: any) => {
-      console.log(res);
-    });
-    setTimeout(() => {
-      this.getAllUsers();
-    }, 100);
-  }
-
   refresh() {
+    this.page = 1;
+    this.data = [];
     this.getdata();
     this.message = '';
     this.noDataFound = true;
+    this.searchResult = false;
+    this.searchfilterform.patchValue({
+      startdatefrom: null,
+      startdateto: null,
+      enddatefrom: null,
+      enddateto: null,
+      status: null,
+      selectValue: null,
+    });
+    this.searchrform.patchValue({
+      data: null,
+    });
   }
 
   // offcanvas-----------
@@ -294,6 +443,37 @@ export class TaskComponent {
         return 'by clicking on the backdrop';
       default:
         return `with: ${reason}`;
+    }
+  }
+
+  onScroll() {
+    console.log('scroll', this.data.length);
+    console.log('tatal', this.total);
+    if (
+      this.data.length < this.total &&
+      this.data.length > 9 &&
+      this.searchResult === false
+    ) {
+      if (this.page == 1) {
+        this.page++;
+        this.getdata();
+      } else {
+        this.getdata();
+      }
+    } else if (
+      this.total > 9 &&
+      this.noDataFound === true &&
+      this.searchResult === true
+    ) {
+      if (this.onInputChangeflag === true) {
+        this.onInputChangeOnScroll();
+      } else if (this.onSearchFilterflag === true) {
+        this.onSearchFilterScroll();
+      } else if (this.onClickFilterCheckBoxflag === true) {
+        this.onClickFilterCheckBoxScroll();
+      }
+    } else if (this.message !== null) {
+      return;
     }
   }
 }

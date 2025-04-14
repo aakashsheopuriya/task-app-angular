@@ -27,26 +27,23 @@
         (click)="onClickDashboard()"
         style="margin-right: 10px"
         ngbNavLink
-        class=""
+        class=" hover:scale-110"
       >
         Dashboard
       </button>
-      <!-- <ng-template ngbNavContent> </ng-template> -->
     </li>
     <li [ngbNavItem]="2">
-      <button (click)="onClickTask()" ngbNavLink>Task</button>
-      <!-- <ng-template ngbNavContent> </ng-template> -->
+      <button (click)="onClickTask()" class=" hover:scale-110" ngbNavLink >Task</button>
     </li>
   </div>
 
   <div class="d-flex">
     <a routerLink="/user-profile">
-      <!-- class="position-fixed" style="right: 70px" -->
       <li>
         <img
           *ngIf="profileImage"
           [src]="profileImage"
-          class="image rounded-5 mx-1"
+          class="image rounded-5 mx-1  hover:scale-110"
           style="height: 40px; width: 40px; z-index: 200px"
           alt="Profile Photo"
           draggable="false"
@@ -58,7 +55,7 @@
         <div class="d-inline-block" ngbDropdown #myDrop="ngbDropdown">
           <button
             type="button"
-            class="btn btn-outline-secondary me-2"
+            class="btn btn-outline-secondary me-2  hover:scale-110"
             id="dropdownManual"
             ngbDropdownAnchor
             (focus)="myDrop.open()"
