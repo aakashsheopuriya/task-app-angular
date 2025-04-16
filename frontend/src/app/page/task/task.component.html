@@ -6,7 +6,7 @@
         type="text"
         class="form-control d-inline"
         formControlName="data"
-        placeholder="Name, Email, Task, Discription"
+        placeholder="Name, Email, Task, Description	"
         style="width: 300px"
       />
       <!-- <button class="btn btn-secondary d-inline mx-2">Search</button> -->
@@ -29,7 +29,7 @@
   <button
     class="btn btn-secondary position-absolute hover:scale-110"
     style="right: 20px; top: 75px"
-    (click)="onClick()"
+    (click)="onClickAddNewTask()"
   >
     Add new task
   </button>
@@ -40,8 +40,8 @@
   >
     <div
       infiniteScroll
-      [infiniteScrollDistance]="1"
-      [infiniteScrollThrottle]="1"
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="500"
       (scrolled)="onScroll()"
     >
       <table
@@ -53,7 +53,7 @@
             <th class="border text-center p-3">No.</th>
             <th class="border-end px-2 text-center py-2">Emaployee Name</th>
             <th class="border-end px-2 text-center py-3">Task</th>
-            <th class="border-end px-2 text-center py-3">Discription</th>
+            <th class="border-end px-2 text-center py-3">Description</th>
             <th class="border-end px-2 text-center py-3">Created By</th>
             <th class="border-end px-5 text-center py-2">Start Date</th>
             <th class="border-end px-5 text-center py-2">End Date</th>
@@ -195,14 +195,13 @@
     </div>
     <div class="offcanvas-body" style="background-color: #e7e7e7">
       <div class="">
-        <!-- filter task by date and status ======== -->
         <form
           [formGroup]="searchfilterform"
-          (ngSubmit)="onSearchFilter()"
+          (ngSubmit)="onSearchFilterSelect()"
           class="d-inline"
         >
           <div class="d-inline">
-            <span class=""> Filter Task By </span>
+            <span class="text-xl font-semibold"> Filter Task By: </span>
 
             <select
               formControlName="selectValue"
@@ -303,79 +302,8 @@
             </div>
           </div>
         </form>
+
         <hr />
-
-        <!-- ==== search user by email -->
-
-        <!-- <form
-          action=""
-          [formGroup]="searchUser"
-          (ngSubmit)="onSearchUser(this.searchUser.get('email')?.value)"
-        >
-          <label for="" class="form-label"> Search user</label>
-          <div class="d-flex">
-            <input
-              type="email"
-              class="form-control"
-              style="max-width: 250px"
-              formControlName="email"
-              placeholder="Enter Email Id"
-            />
-            <button
-              class="btn btn-secondary btn-sm w-100 mx-2"
-              style="max-width: 80px"
-            >
-              Search
-            </button>
-          </div>
-          <span style="color: red">{{ this.userMessage }}</span>
-        </form> -->
-
-        <!-- <div
-          *ngIf="this.userData?.firstname"
-          class="container rounded d-flex align-items-center my-3 shadow"
-          style="height: 100px"
-        >
-          <div>
-            <div>
-              First Name = <span>{{ this.userData.firstname }}</span>
-            </div>
-            <div>
-              Last Name = <span>{{ this.userData.lastname }}</span>
-            </div>
-            <div>
-              Email = <span>{{ this.userData.email }}</span>
-            </div>
-          </div>
-        </div> -->
-
-        <!-- <hr /> -->
-
-        <!-- <div class="container" style="width: auto">
-          <h3>Users List</h3>
-          <table
-            class="table table-hover table-sm table-borderless table-secondary table- mt-3"
-          >
-            <thead>
-              <tr class="">
-                <th class="text-center">No.</th>
-                <th class="px-2 text-center">Check Box</th>
-                <th class="px-2 text-center">Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of allUsersData; track $index) {
-              <tr>
-                <td class="text-center">{{ $index + 1 }}</td>
-                <td ><input class="px-2 text-center form-check-input" type="checkbox"> Select</td>
-                <td class="px-2 text-center">
-                  {{ item.firstname }} {{ item.lastname }}
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div> -->
 
         <div class="container" style="width: auto">
           <h3>Users List</h3>
@@ -399,7 +327,6 @@
             </thead>
             <tbody>
               <tr *ngFor="let item of allUsersData; let i = index">
-                <!-- <td class="text-center">{{ i + 1 }}</td> -->
                 <td class="text-center">
                   <img
                     src="{{`http://localhost:4000/uploads/${ item.image }`}}"

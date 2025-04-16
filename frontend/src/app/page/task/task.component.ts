@@ -51,7 +51,7 @@ export class TaskComponent {
   loading: boolean = false;
   total: number = 0;
   onInputChangeflag = false;
-  onSearchFilterflag = false;
+  onSearchFilterSelectflag = false;
   onClickFilterCheckBoxflag = false;
 
   searchfilterform = new FormGroup({
@@ -81,7 +81,7 @@ export class TaskComponent {
     return new Date(endDate) < new Date();
   }
 
-  onClick() {
+  onClickAddNewTask() {
     this.router.navigate(['/add-task']);
   }
 
@@ -148,8 +148,121 @@ export class TaskComponent {
     }, 200);
   }
 
-  onSearchFilter() {
-    this.onSearchFilterflag = true;
+  onEditTask(uid: any) {
+    this.router.navigate(['/add-task'], { state: { uid: uid } });
+  }
+
+  refresh() {
+    this.page = 1;
+    this.data = [];
+    this.getdata();
+    this.message = '';
+    this.noDataFound = true;
+    this.searchResult = false;
+    this.searchfilterform.patchValue({
+      startdatefrom: null,
+      startdateto: null,
+      enddatefrom: null,
+      enddateto: null,
+      status: null,
+      selectValue: null,
+    });
+    this.searchrform.patchValue({
+      data: null,
+    });
+  }
+
+  // ---------------
+  inputValue: string = '';
+  onInputChange(event: Event) {
+    this.inputValue = (event.target as HTMLInputElement).value;
+    if (this.inputValue.length > 2) {
+      setTimeout(() => {
+        this.service
+          .onSearchTaskbyName(
+            { inputdata: this.inputValue },
+            this.page,
+            this.limit
+          )
+          .subscribe((res: any) => {
+            if (res.status === 0) {
+              this.data = [];
+              this.page = 1;
+              this.getdata2();
+              this.searchResult = false;
+              this.noDataFound = false;
+              this.message = res.message;
+              this.total = res.total;
+              this.onInputChangeflag = false;
+            } else {
+              this.searchResult = true;
+              this.noDataFound = true;
+              this.data = res.data;
+              this.message = null;
+              this.total = res.total;
+              this.onInputChangeflag = true;
+              if (this.data.length === this.total) {
+                this.onInputChangeflag = false;
+              }
+            }
+          });
+      }, 100);
+    } else {
+      this.searchResult = false;
+      this.page = 1;
+      this.getdata2();
+      this.noDataFound = true;
+      this.message = null;
+    }
+  }
+
+  onInputChangeOnScroll() {
+    if (this.inputValue.length > 2) {
+      setTimeout(() => {
+        this.page++;
+        this.service
+          .onSearchTaskbyName(
+            { inputdata: this.inputValue },
+            this.page,
+            this.limit
+          )
+          .subscribe((res: any) => {
+            console.log(res);
+            if (res.status === 0) {
+              this.searchResult = false;
+              this.onInputChangeflag = false;
+              // this.data = [];
+              // this.page = 1;
+              // this.getdata2();
+              // this.noDataFound = false;
+              // this.message = res.message;
+              return;
+            } else {
+              this.total = res.total;
+              this.searchResult = true;
+              this.noDataFound = true;
+              this.data.push(...res.data);
+              this.onInputChangeflag = true;
+              this.message = null;
+              if (this.data.length === this.total) {
+                this.onInputChangeflag = false;
+              }
+            }
+          });
+      }, 100);
+    } else {
+      this.searchResult = false;
+      this.page = 1;
+      this.getdata2();
+      this.noDataFound = true;
+      this.onInputChangeflag = false;
+      this.message = null;
+    }
+  }
+
+  // ---------------
+  onSearchFilterSelect() {
+    this.onSearchFilterSelectflag = true;
     this.serchData = this.searchfilterform.value;
     if (
       this.searchfilterform.get('startdatefrom')?.value === null &&
@@ -171,7 +284,7 @@ export class TaskComponent {
             this.message = 'No result Found';
             this.noDataFound = false;
             this.searchResult = false;
-            this.onSearchFilterflag = false;
+            this.onSearchFilterSelectflag = false;
             this.searchfilterform.patchValue({
               startdatefrom: null,
               startdateto: null,
@@ -181,28 +294,31 @@ export class TaskComponent {
               selectValue: null,
             });
           } else {
-            this.onSearchFilterflag = true;
+            this.onSearchFilterSelectflag = true;
             this.searchResult = true;
             this.data = res.data;
             this.total = res.total;
             this.message = null;
             this.noDataFound = true;
+            if (this.data.length === this.total) {
+              this.onSearchFilterSelectflag = false;
+              this.searchfilterform.patchValue({
+                startdatefrom: null,
+                startdateto: null,
+                enddatefrom: null,
+                enddateto: null,
+                status: null,
+                selectValue: null,
+              });
+            }
           }
         });
-      // this.searchfilterform.patchValue({
-      //   startdatefrom: null,
-      //   startdateto: null,
-      //   enddatefrom: null,
-      //   enddateto: null,
-      //   status: null,
-      //   selectValue: null,
-      // });
     }
   }
 
-  onSearchFilterScroll() {
+  onSearchFilterSelectScroll() {
     this.page++;
-    this.onSearchFilterflag = true;
+    this.onSearchFilterSelectflag = true;
     this.serchData = this.searchfilterform.value;
     if (
       this.searchfilterform.get('startdatefrom')?.value === null &&
@@ -219,7 +335,7 @@ export class TaskComponent {
         .onSearchTask(this.serchData, this.page, this.limit)
         .subscribe((res: any) => {
           if (res.data.length === 0) {
-            this.onSearchFilterflag = false;
+            this.onSearchFilterSelectflag = false;
             this.searchResult = false;
             this.searchfilterform.patchValue({
               startdatefrom: null,
@@ -230,19 +346,29 @@ export class TaskComponent {
               selectValue: null,
             });
           } else {
-            this.searchResult = true;
             this.data.push(...res.data);
             this.total = res.total;
             console.log(this.data.length);
-            this.message = null;
-            this.noDataFound = true;
+            // this.message = null;
+            // this.searchResult = true;
+            // this.noDataFound = true;
+            if (this.data.length === this.total) {
+              this.onSearchFilterSelectflag = false;
+              this.searchfilterform.patchValue({
+                startdatefrom: null,
+                startdateto: null,
+                enddatefrom: null,
+                enddateto: null,
+                status: null,
+                selectValue: null,
+              });
+            }
           }
         });
     }
   }
 
   // ---------
-
   selectAll: boolean = false;
 
   toggleAllCheckboxes() {
@@ -278,8 +404,12 @@ export class TaskComponent {
           this.data = res.data;
           this.message = null;
           this.searchResult = true;
+          if (this.data.length === this.total) {
+            this.onClickFilterCheckBoxflag = false;
+          }
         } else {
           this.onClickFilterCheckBoxflag = false;
+          this.total = res.total;
           this.searchResult = false;
           this.noDataFound = false;
           this.message = 'No result Found';
@@ -289,12 +419,10 @@ export class TaskComponent {
 
   onClickFilterCheckBoxScroll() {
     this.page++;
-    this.onClickFilterCheckBoxflag = true;
     const selectedEmails = this.allUsersData
       .filter((user: any) => user.selected)
       .map((user: any) => user.email);
     console.log('Selected emails:', selectedEmails);
-    console.log(this.limit, this.page);
     this.service
       .onSearchTaskbyEmail(
         { selectedEmails: selectedEmails },
@@ -302,121 +430,17 @@ export class TaskComponent {
         this.limit
       )
       .subscribe((res: any) => {
-        console.log('res', res);
         if (res.status == 1) {
-          this.noDataFound = true;
+          this.total = res.total;
           this.data.push(...res.data);
-          this.message = null;
-          this.searchResult = true;
+          // this.noDataFound = true;
+          // this.message = null;
+          // this.searchResult = true;
         } else {
           this.onClickFilterCheckBoxflag = false;
           this.searchResult = false;
         }
       });
-  }
-
-  // ---------------
-  inputValue: string = '';
-  onInputChange(event: Event) {
-    this.onInputChangeflag = true;
-    this.inputValue = (event.target as HTMLInputElement).value;
-    if (this.inputValue.length > 2) {
-      setTimeout(() => {
-        this.service
-          .onSearchTaskbyName(
-            { inputdata: this.inputValue },
-            this.page,
-            this.limit
-          )
-          .subscribe((res: any) => {
-            console.log(res);
-            if (res.status === 0) {
-              this.data = [];
-              this.page = 1;
-              this.getdata2();
-              this.searchResult = false;
-              this.noDataFound = false;
-              this.message = res.message;
-              this.total = res.total;
-              this.onInputChangeflag = false;
-            } else {
-              this.searchResult = true;
-              this.noDataFound = true;
-              this.data = res.data;
-              this.message = null;
-              this.total = res.total;
-            }
-          });
-      }, 100);
-    } else {
-      this.searchResult = false;
-      this.page = 1;
-      this.getdata2();
-      this.noDataFound = true;
-      this.message = null;
-    }
-  }
-  onInputChangeOnScroll() {
-    if (this.inputValue.length > 2) {
-      setTimeout(() => {
-        this.page++;
-        this.service
-          .onSearchTaskbyName(
-            { inputdata: this.inputValue },
-            this.page,
-            this.limit
-          )
-          .subscribe((res: any) => {
-            console.log(res);
-            if (res.status === 0) {
-              this.onInputChangeflag = false;
-              // this.data = [];
-              // this.page = 1;
-              // this.getdata2();
-              this.searchResult = false;
-              // this.noDataFound = false;
-              // this.message = res.message;
-              return;
-            } else {
-              this.total = res.total;
-              this.searchResult = true;
-              this.noDataFound = true;
-              this.data.push(...res.data);
-              this.message = null;
-            }
-          });
-      }, 100);
-    } else {
-      this.searchResult = false;
-      this.page = 1;
-      this.getdata2();
-      this.noDataFound = true;
-      this.message = null;
-    }
-  }
-
-  onEditTask(uid: any) {
-    this.router.navigate(['/add-task'], { state: { uid: uid } });
-  }
-
-  refresh() {
-    this.page = 1;
-    this.data = [];
-    this.getdata();
-    this.message = '';
-    this.noDataFound = true;
-    this.searchResult = false;
-    this.searchfilterform.patchValue({
-      startdatefrom: null,
-      startdateto: null,
-      enddatefrom: null,
-      enddateto: null,
-      status: null,
-      selectValue: null,
-    });
-    this.searchrform.patchValue({
-      data: null,
-    });
   }
 
   // offcanvas-----------
@@ -449,6 +473,9 @@ export class TaskComponent {
   onScroll() {
     console.log('scroll', this.data.length);
     console.log('tatal', this.total);
+    console.log(this.onInputChangeflag);
+    console.log(this.onSearchFilterSelectflag);
+    console.log(this.onClickFilterCheckBoxflag);
     if (
       this.data.length < this.total &&
       this.data.length > 9 &&
@@ -466,10 +493,13 @@ export class TaskComponent {
       this.searchResult === true
     ) {
       if (this.onInputChangeflag === true) {
+        console.log('onInputChangeflag');
         this.onInputChangeOnScroll();
-      } else if (this.onSearchFilterflag === true) {
-        this.onSearchFilterScroll();
+      } else if (this.onSearchFilterSelectflag === true) {
+        console.log('onSearchFilterSelectflag');
+        this.onSearchFilterSelectScroll();
       } else if (this.onClickFilterCheckBoxflag === true) {
+        console.log('onClickFilterCheckBoxflag');
         this.onClickFilterCheckBoxScroll();
       }
     } else if (this.message !== null) {
