@@ -7,8 +7,8 @@ import { authGuard } from './guard/auth.guard';
 import { tokenGuard } from './guard/token.guard';
 import { HomeComponent } from './page/home/home.component';
 import { AddTaskComponent } from './page/add-task/add-task.component';
-import { TaskComponent } from './page/task/task.component';
-import { UserProfileComponent } from './page/user-profile/user-profile.component';
+// import { TaskComponent } from './page/task/task.component';
+// import { UserProfileComponent } from './page/user-profile/user-profile.component';
 import { EditUserProfileComponent } from './page/edit-user-profile/edit-user-profile.component';
 import { NoPageFoundComponent } from './page/no-page-found/no-page-found.component';
 
